@@ -4,14 +4,18 @@ import FormLayout from "../formLayout";
 import TextField from "../textField";
 import { validationSchema } from "./validationSchema";
 import { parceYupError } from "../../utils/parceYupError";
+import PropTypes from "prop-types";
 
-function EditForm() {
-  const [student, setStudent] = useState({
-    name: "",
-    surname: "",
-    year: "",
-    portfolio: "",
-  });
+function EditForm({ onShowModal }) {
+  const [student, setStudent] = useState(
+    () =>
+      JSON.parse(localStorage.getItem("student")) || {
+        name: "",
+        surname: "",
+        year: "",
+        portfolio: "",
+      }
+  );
   const [errors, setErrors] = useState({});
 
   const hasStudentData = !!localStorage.getItem("student");
@@ -28,15 +32,11 @@ function EditForm() {
       });
   }, [student]);
 
-  useEffect(() => {
-    if (hasStudentData) setStudent(JSON.parse(localStorage.getItem("student")));
-  }, []);
-
   const handleSubmit = (e) => {
     e.preventDefault();
     if (isValid) {
       localStorage.setItem("student", JSON.stringify(student));
-      console.log("Записано!");
+      onShowModal("Обновлено!");
     }
   };
 
@@ -72,6 +72,7 @@ function EditForm() {
             id="year"
             name="year"
             label="Год рождения"
+            type="number"
             value={student.year}
             onChange={handleChange}
             error={errors.year}
@@ -84,17 +85,28 @@ function EditForm() {
             onChange={handleChange}
             error={errors.portfolio}
           />
-          <button className="btn btn-primary" type="submit">
-            Оформить
+          {hasStudentData && (
+            <Link to="/" className="btn btn-secondary me-2">
+              Назад
+            </Link>
+          )}
+          <button
+            className="btn btn-primary"
+            type="submit"
+            data-bs-toggle="modal"
+            data-bs-target="#modal"
+            disabled={!isValid}
+          >
+            {hasStudentData ? "Обновить" : "Создать"}
           </button>
-
-          <Link to="/" className="btn btn-secondary">
-            Назад
-          </Link>
         </form>
       </FormLayout>
     </>
   );
 }
+
+EditForm.propTypes = {
+  onShowModal: PropTypes.func.isRequired,
+};
 
 export default EditForm;

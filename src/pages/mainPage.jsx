@@ -5,13 +5,17 @@ import StudentCard from "../components/studentCard";
 function MainPage() {
   const student = localStorage.getItem("student");
   return (
-    <>
-      <h1>Карточка студнта</h1>
-      {student ? <StudentCard student={JSON.parse(student)} /> : <div>Нет двнных</div>}
-      <Link to="/edit" className="btn btn-primary">
+    <div className="col-md-6 offset-md-3 shadow p-4">
+      <h1 className="mb-4">Карточка студнта</h1>
+      {student ? (
+        <StudentCard {...JSON.parse(student)} />
+      ) : (
+        <div>Нет данных</div>
+      )}
+      <Link to="/edit" className="btn btn-primary mt-2">
         {student ? "Редактировать" : "Добавить"}
       </Link>
-    </>
+    </div>
   );
 }
 
